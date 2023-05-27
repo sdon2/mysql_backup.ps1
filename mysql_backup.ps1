@@ -19,6 +19,7 @@ $7zipPath = $PSScriptRoot + "\bin\7za.exe"
 
 # Output files path
 $errorLogPath = $PSScriptRoot + "\logs\error.log"
+$successLogPath = $PSScriptRoot + "\logs\success.log"
 $dumpFilePath = $PSScriptRoot + "\backups\{0}-{1}.sql" -f $DbName, $FileName
 $zipFilePath = $PSScriptRoot + "\backups\{0}-{1}.zip" -f $DbName, $FileName
 
@@ -57,7 +58,7 @@ If (-Not (Test-Path -Path $dumpFilePath -PathType Leaf)) {
 $processOptions = @{
     FilePath = $7zipPath
     ArgumentList = 'a -tzip "{0}" "{1}"' -f $zipFilePath, $dumpFilePath
-    RedirectStandardOutput = $errorLogPath
+    RedirectStandardOutput = $successLogPath
     RedirectStandardError = $errorLogPath
     NoNewWindow = $true
     UseNewEnvironment = $false
@@ -66,10 +67,10 @@ $processOptions = @{
 Start-Process @processOptions
 
 # If there's an error then exit:
-If (Test-Path -Path $errorLogPath -PathType Leaf) {
-    $errors = Get-Content -Path $errorLogPath -Raw
-    if (-Not $errors.ToLower().Contains('everything is ok')) {
-        Write-Output $errors
+If (Test-Path -Path $successLogPath -PathType Leaf) {
+    $success = Get-Content -Path $successLogPath -Raw
+    if (-Not $success.ToLower().Contains('everything is ok')) {
+        Write-Output $success
         exit
     }
 }
@@ -77,6 +78,6 @@ If (Test-Path -Path $errorLogPath -PathType Leaf) {
 $ClientSecretsPath = $PSScriptRoot + "\" + $CredentialsPath
 
 $UploadFile = $zipFilePath
- 
+
 Set-PSGSuiteConfig -ConfigName HollowBillsConfig -SetAsDefaultConfig -ClientSecretsPath $ClientSecretsPath -AdminEmail $AdminEmail
 Start-GSDriveFileUpload -Path $UploadFile -Recurse -Wait -User $GoogleUser
