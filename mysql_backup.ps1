@@ -10,6 +10,13 @@ param (
     [string]$GDriveFolderId = ""
 )
 
+# Check network status
+$networkStatus = Get-NetRoute | ? DestinationPrefix -eq '0.0.0.0/0' | Get-NetIPInterface | Where ConnectionState -eq 'Connected'
+if (-Not $networkStatus) {
+    Write-Output "Not connected to network"
+    exit
+}
+
 # Clear backups/logs folder
 Get-ChildItem -Path ($PSScriptRoot + "\backups") -Include *.sql, *.zip -File -Recurse | foreach { $_.Delete()}
 Get-ChildItem -Path ($PSScriptRoot + "\logs") -Include *.log -File -Recurse | foreach { $_.Delete()}
@@ -74,6 +81,10 @@ If (Test-Path -Path $successLogPath -PathType Leaf) {
         Write-Output $success
         exit
     }
+}
+else {
+    Write-Output "Can't create zip file"
+    exit
 }
 
 # Configure PSGSuite
