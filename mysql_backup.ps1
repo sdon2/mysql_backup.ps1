@@ -76,7 +76,7 @@ If (Test-Path -Path $successLogPath -PathType Leaf) {
 }
 
 # Configure PSGSuite
-@suiteConfig = @{
+$suiteConfig = @{
     ConfigName = "HollowBillsConfig"
     SetAsDefaultConfig = $true
     ClientSecretsPath = $PSScriptRoot + "\" + $CredentialsPath
