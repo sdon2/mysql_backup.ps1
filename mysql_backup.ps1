@@ -6,7 +6,8 @@ param (
     [Parameter(Mandatory=$true)][string]$DbName,
 	[Parameter(Mandatory=$true)][string]$GoogleUser,
     [string]$CredentialsPath = "credentials.json",
-    [Parameter(Mandatory=$true)][string]$AdminEmail
+    [Parameter(Mandatory=$true)][string]$AdminEmail,
+    [string]$GDriveFolderId = ""
 )
 
 # Clear backups/logs folder
@@ -85,4 +86,4 @@ $suiteConfig = @{
 Set-PSGSuiteConfig @suiteConfig
 
 # Upload File
-Start-GSDriveFileUpload -Path $zipFilePath -Recurse -Wait -User $GoogleUser
+Start-GSDriveFileUpload -Path $zipFilePath -Parents $GDriveFolderId -Recurse -Wait -User $GoogleUser
