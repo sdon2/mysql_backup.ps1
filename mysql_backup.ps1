@@ -75,9 +75,14 @@ If (Test-Path -Path $successLogPath -PathType Leaf) {
     }
 }
 
-$ClientSecretsPath = $PSScriptRoot + "\" + $CredentialsPath
+# Configure PSGSuite
+@suiteConfig = @{
+    ConfigName = "HollowBillsConfig"
+    SetAsDefaultConfig = $true
+    ClientSecretsPath = $PSScriptRoot + "\" + $CredentialsPath
+    AdminEmail = $AdminEmail
+}
+Set-PSGSuiteConfig @suiteConfig
 
-$UploadFile = $zipFilePath
-
-Set-PSGSuiteConfig -ConfigName HollowBillsConfig -SetAsDefaultConfig -ClientSecretsPath $ClientSecretsPath -AdminEmail $AdminEmail
-Start-GSDriveFileUpload -Path $UploadFile -Recurse -Wait -User $GoogleUser
+# Upload File
+Start-GSDriveFileUpload -Path $zipFilePath -Recurse -Wait -User $GoogleUser
